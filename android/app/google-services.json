@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "702217726569",
+    "firebase_url": "https://bumm-93d36.firebaseio.com",
+    "project_id": "bumm-93d36",
+    "storage_bucket": "bumm-93d36.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702217726569:android:6113dfb106268c80de50f8",
+        "android_client_info": {
+          "package_name": "com.example.newlog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702217726569-5slt0aat1c0dgotdiqs218dp394eanoa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkcMLKr5qjZIV6-m-uPRuOrSbhBRcXoig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702217726569-5slt0aat1c0dgotdiqs218dp394eanoa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
