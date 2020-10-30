@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:newlog/screens/home.dart';
+import 'package:newlog/screens/register.dart';
+import 'package:newlog/uti/dialog.dart';
+import 'package:newlog/uti/mystyle.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -9,23 +13,29 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   String username, password;
+  final database = FirebaseDatabase.instance.reference();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: RadialGradient(
-            colors: <Color>[Colors.white, Colors.yellow],
-            center: Alignment(0, -0.3),
-            radius: 1.0,
-          ),
+          image: DecorationImage(
+              image: AssetImage('images/1.jpg'), fit: BoxFit.cover),
         ),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[userForm(), Text(''), passForm(), login()],
+              children: <Widget>[
+                MyStyle().showText('แกลลอรี่ของฉัน'),
+                MyStyle().showText(''),
+                userForm(),
+                Text(''),
+                passForm(),
+                login(),
+                register()
+              ],
             ),
           ),
         ),
@@ -34,9 +44,9 @@ class _LoginState extends State<Login> {
   }
 
   Widget login() => Container(
-        width: 250.0,
+        width: 150.0,
         child: RaisedButton(
-          color: Colors.black,
+          color: Colors.green,
           onPressed: () {
             print('user = $username pass = $password');
             if (username == null ||
@@ -44,6 +54,7 @@ class _LoginState extends State<Login> {
                 password == null ||
                 password.isEmpty) {
               print('กรุณากรอกข้อมูล');
+              normalDialog(context, 'กรุณากรอกข้อมูล');
             } else {
               loginserve();
             }
@@ -56,29 +67,53 @@ class _LoginState extends State<Login> {
       );
 
   Future<Null> loginserve() async {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    await firebaseAuth
-        .signInWithEmailAndPassword(email: username, password: password)
-        .then((value) {
-      MaterialPageRoute route = MaterialPageRoute(
-        builder: (context) => Home(),
-      );
-      Navigator.pushAndRemoveUntil(context, route, (route) => false);
+
+    var data = database.child("user");
+    await data.child(username).once().then((DataSnapshot snapshot){
+      print('Data ======>${snapshot.value}');
+      if('${snapshot.value}' == 'null'){
+        print('user');
+        normalDialog(context, 'username ของท่านผิด'); 
+      }
+      else if(password == '${snapshot.value['password']}'){
+        MaterialPageRoute route = MaterialPageRoute(builder: (context) => Home(),);
+        Navigator.pushAndRemoveUntil(context, route, (route) => false);
+        }else{
+        print('รหัสไม่ถูก');
+        normalDialog(context,'รหัสไม่ถูกต้อง กรุณากรอกใหม่');
+        }
+      
+      
     });
   }
+
+  Widget register() => Container(
+      width: 150.0,
+      child: RaisedButton(color: Colors.red,
+        onPressed: () {
+          MaterialPageRoute route = MaterialPageRoute(
+            builder: (context) => Register(),
+          );
+          Navigator.push(context, route);
+        },
+        child: Text(
+          'Register',
+          style: TextStyle(color: Colors.white),
+        ),
+      ));
 
   Widget userForm() => Container(
         width: 250.0,
         child: TextField(
           onChanged: (value) => username = value.trim(),
           decoration: InputDecoration(
-              prefixIcon: Icon(Icons.account_box),
-              labelStyle: TextStyle(color: Colors.deepOrangeAccent),
-              labelText: 'Email',
+              prefixIcon: Icon(Icons.account_box,color: Colors.yellow,),
+              labelStyle: TextStyle(color: Colors.white),
+              labelText: 'Username',
               enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black)),
+                  borderSide: BorderSide(color: Colors.yellow)),
               focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black))),
+                  borderSide: BorderSide(color: Colors.white))),
         ),
       );
 
@@ -88,13 +123,13 @@ class _LoginState extends State<Login> {
           onChanged: (value) => password = value.trim(),
           obscureText: true,
           decoration: InputDecoration(
-              prefixIcon: Icon(Icons.lock),
-              labelStyle: TextStyle(color: Colors.deepOrangeAccent),
+              prefixIcon: Icon(Icons.lock,color: Colors.yellow),
+              labelStyle: TextStyle(color: Colors.white),
               labelText: 'Password',
               enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black)),
+                  borderSide: BorderSide(color: Colors.yellow)),
               focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black))),
+                  borderSide: BorderSide(color: Colors.white))),
         ),
       );
 }
