@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:newlog/screens/login.dart';
@@ -66,6 +67,7 @@ class _RegisterState extends State<Register> {
               }
             });
           }
+          
         },
         child: Text(
           'Register',
@@ -73,17 +75,19 @@ class _RegisterState extends State<Register> {
         ),
       ));
 
-  Future<Null> regis() async {
+      Future<Null> regis() async {
     var root = database.child("user");
     root.child(username).set({
       'name': name,
-      'Password': password,
+      'password': password,
     });
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => Login(),
     );
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
+
+
 
   Widget back() => Container(
       width: 100.0,
@@ -129,7 +133,7 @@ class _RegisterState extends State<Register> {
                 color: Colors.white,
               ),
               labelStyle: TextStyle(color: Colors.white),
-              labelText: 'Name',
+              labelText: 'name',
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black)),
               focusedBorder: OutlineInputBorder(

@@ -6,6 +6,8 @@ import 'package:newlog/screens/register.dart';
 import 'package:newlog/uti/dialog.dart';
 import 'package:newlog/uti/mystyle.dart';
 
+String user, namee, passwordd,urll;
+
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -28,7 +30,7 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                MyStyle().showText('แกลลอรี่ของฉัน'),
+                MyStyle().showText('โน้ตของฉัน'),
                 MyStyle().showText(''),
                 userForm(),
                 Text(''),
@@ -57,7 +59,7 @@ class _LoginState extends State<Login> {
               normalDialog(context, 'กรุณากรอกข้อมูล');
             } else {
               loginserve();
-            }
+          }
           },
           child: Text(
             'Singin',
@@ -66,11 +68,12 @@ class _LoginState extends State<Login> {
         ),
       );
 
-  Future<Null> loginserve() async {
+ Future<Null> loginserve() async {
 
     var data = database.child("user");
     await data.child(username).once().then((DataSnapshot snapshot){
       print('Data ======>${snapshot.value}');
+      user = username;
       if('${snapshot.value}' == 'null'){
         print('user');
         normalDialog(context, 'username ของท่านผิด'); 
@@ -87,9 +90,11 @@ class _LoginState extends State<Login> {
     });
   }
 
+
   Widget register() => Container(
       width: 150.0,
-      child: RaisedButton(color: Colors.red,
+      child: RaisedButton(
+        color: Colors.red,
         onPressed: () {
           MaterialPageRoute route = MaterialPageRoute(
             builder: (context) => Register(),
@@ -107,7 +112,10 @@ class _LoginState extends State<Login> {
         child: TextField(
           onChanged: (value) => username = value.trim(),
           decoration: InputDecoration(
-              prefixIcon: Icon(Icons.account_box,color: Colors.yellow,),
+              prefixIcon: Icon(
+                Icons.account_box,
+                color: Colors.yellow,
+              ),
               labelStyle: TextStyle(color: Colors.white),
               labelText: 'Username',
               enabledBorder: OutlineInputBorder(
@@ -123,7 +131,7 @@ class _LoginState extends State<Login> {
           onChanged: (value) => password = value.trim(),
           obscureText: true,
           decoration: InputDecoration(
-              prefixIcon: Icon(Icons.lock,color: Colors.yellow),
+              prefixIcon: Icon(Icons.lock, color: Colors.yellow),
               labelStyle: TextStyle(color: Colors.white),
               labelText: 'Password',
               enabledBorder: OutlineInputBorder(
