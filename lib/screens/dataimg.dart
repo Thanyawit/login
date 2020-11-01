@@ -1,10 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+import 'dart:math';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:newlog/screens/home.dart';
 import 'package:newlog/screens/login.dart';
+import 'package:newlog/uti/dialog.dart';
 
 class Dataimgg extends StatefulWidget {
   @override
@@ -18,6 +21,8 @@ class _DataimggState extends State<Dataimgg> {
   String note;
   DateTime date = DateTime.now();
   var formatter = DateFormat.yMd();
+  File _image;
+  String urlp;
 
   @override
   void initState() {
@@ -39,10 +44,56 @@ class _DataimggState extends State<Dataimgg> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[dataa(), Text(''), userForm(), sevee()],
+              children: <Widget>[showImage(),dataa(), openn(), Text(''), sevee()],
             ),
           ),
         ));
+  }
+
+  Widget openn() => Container(
+        width: 150.0,
+        child: RaisedButton(
+          color: Colors.green,
+          onPressed: () {
+            chooseFile(ImageSource.gallery);
+          },
+          child: Text(
+            'คลังรูป',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+
+  Future chooseFile(ImageSource source) async {
+    try {
+      var object = await ImagePicker.pickImage(
+          source: source, maxWidth: 800.0, maxHeight: 800.0);
+
+      setState(() {
+        _image = object;
+      });
+    } catch (e) {}
+  }
+
+  Widget showImage() {
+    return Container(
+      padding: EdgeInsets.all(20.0),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width * 0.3,child: _image == null ? Text('ไม่มีรูปภาพ') : Image.file(_image),
+    );
+  }
+
+  Future uploadFile() async {
+    Random random = Random();
+    int i = random.nextInt(1000);
+    FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+    StorageReference storageReference = firebaseStorage.ref().child('test/$i.jpg');
+    StorageUploadTask storageUploadTask = storageReference.putFile(_image);
+
+    urlp = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    print('==================$urlp');
+
+    show();
   }
 
   Widget sevee() => Container(
@@ -50,7 +101,11 @@ class _DataimggState extends State<Dataimgg> {
         child: RaisedButton(
           color: Colors.green,
           onPressed: () {
-            show();
+            if(_image == null){
+              normalDialog(context, 'กรุณาใส่รูปภาพ');
+            }else{
+            uploadFile();
+          }
           },
           child: Text(
             'บันทึก',
@@ -63,31 +118,11 @@ class _DataimggState extends State<Dataimgg> {
 
   Future<Null> show() async {
     var data = database.child("user");
-    data
-        .child(user)
-        .child('note')
-        .push()
-        .set({'$movieName': note, '$datee': dataa()}).asStream();
+    data.child(user).child('note').push().set({
+      'MovieTitle': urlp,
+      'Date': '${formatter.format(date)}'
+    }).asStream();
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => Home());
     Navigator.push(context, route);
   }
-
-  Widget userForm() => Container(
-        width: 300.0,
-        height: 100.0,
-        child: TextField(
-          onChanged: (value) => note = value.trim(),
-          decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.add_to_photos,
-                color: Colors.black,
-              ),
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: 'โน้ต',
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orangeAccent))),
-        ),
-      );
 }

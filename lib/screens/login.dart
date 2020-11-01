@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                MyStyle().showText('โน้ตของฉัน'),
+                MyStyle().showText('My Gallery'),
                 MyStyle().showText(''),
                 userForm(),
                 Text(''),

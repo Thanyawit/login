@@ -39,9 +39,12 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('images/4.jpg'), fit: BoxFit.cover)),
         child: ListView.builder(
             itemCount: datashows.length,
-            itemBuilder: (BuildContext con, int index){
+            itemBuilder: (BuildContext con, int index) {
               return showlistview(index);
             }),
       ),
@@ -51,31 +54,41 @@ class _HomeState extends State<Home> {
                 MaterialPageRoute(builder: (context) => Dataimgg());
             Navigator.push(context, route);
           },
-          label: Text('บันทึกโน้ต')),
+          label: Text('ที่บันทึกรูปภาพ')),
     );
   }
 
   Widget showname(int index) {
-    return Text(datashows[index].movieTitle);
+    return Text('วันที่อัพเดท ${datashows[index].date}');
   }
 
   Widget showtext(int index) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.5,
+      height: MediaQuery.of(context).size.width * 0.1,
       child: Column(
         children: <Widget>[showname(index)],
       ),
     );
   }
 
+  Widget showImage(int index) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.5,
+      height: MediaQuery.of(context).size.width * 0.5,
+      child: Image.network(datashows[index].movieTitle),
+    );
+  }
+
   Widget showlistview(int index) {
     return Row(
-      children: <Widget>[showtext(index)],
+      children: <Widget>[showImage(index), showtext(index)],
     );
   }
 
   Future<Null> show() async {
     DatabaseReference databaseReference = database.reference().child('user');
-    await databaseReference
+    databaseReference
         .child(user)
         .child('note')
         .once()
@@ -83,7 +96,7 @@ class _HomeState extends State<Home> {
       print(snapshot.value);
       Map<dynamic, dynamic> values = snapshot.value;
       values.forEach((key, values) {
-        // print(values['MovieTitle']);
+        print(values['MovieTitle']);
 
         Datashow datashow = Datashow.formMap(values);
         print(datashow.toString());
