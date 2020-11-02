@@ -1,4 +1,4 @@
-# newlog
+# My Gallery
 
 A new Flutter project.
 
