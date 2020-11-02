@@ -2,7 +2,8 @@
 
 A new Flutter project.
 
-## Getting Started
+## พัฒนาแอปพลิเคชัน
+-นาย ธัญวิทย์ ดวงแสง รหัสนิสิต 60020705
 
 This project is a starting point for a Flutter application.
 
